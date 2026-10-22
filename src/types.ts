@@ -1,0 +1,11 @@
+export type Patient = { id: string; name: string; phone: string; dob: string; email: string; obs: string; created: string; arch?: boolean }
+export type Pro = { id: string; name: string; esp: string }
+export type ApptStatus = 'agendada' | 'confirmada' | 'concluída' | 'cancelada' | 'não compareceu'
+export type Appt = { id: string; pid: string; prid: string; date: string; time: string; dur: number; proc: string; status: ApptStatus }
+export type Treat = { id: string; pid: string; prid: string; proc: string; date: string; val: number; status: 'planejado' | 'em andamento' | 'concluído'; obs: string }
+export type Fin = { id: string; desc: string; type: 'receita' | 'despesa'; val: number; status: 'pago' | 'pendente'; method: string; date: string }
+export type Data = { patients: Patient[]; pros: Pro[]; appts: Appt[]; treats: Treat[]; fin: Fin[] }
+export type User = { id: string; name: string; clinic: string; email: string; hash: string }
+export const PROCS = ['Consulta de avaliação', 'Limpeza', 'Restauração', 'Canal', 'Extração', 'Clareamento', 'Aparelho ortodôntico', 'Implante']
+export const STATUS: ApptStatus[] = ['agendada', 'confirmada', 'concluída', 'cancelada', 'não compareceu']
+export const OFF: ApptStatus[] = ['cancelada', 'não compareceu']
