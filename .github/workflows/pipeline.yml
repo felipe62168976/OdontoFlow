@@ -1,0 +1,11 @@
+name: pipeline
+
+on:
+    push
+
+jobs:
+    teste:
+        runs-on: ubuntu-latest
+        steps:
+            -name: Clone
+            uses: actions/checkout@v7
