@@ -1,11 +1,84 @@
-name: pipeline
+# Salve como: .github/workflows/pipeline.yml
+name: Pipeline
 
 on:
-    push
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Cancela execuções antigas da mesma branch
+concurrency:
+  group: pipeline-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-    teste:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Clone
-              uses: actions/checkout@v7
+  build:
+    name: Verificar e compilar
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # Depois de commitar o package-lock.json, ative o cache abaixo
+          # e troque "npm install" por "npm ci":
+          # cache: npm
+
+      - name: Instalar dependências
+        run: npm install --no-audit --no-fund
+
+      - name: Checar tipos (TypeScript)
+        run: npx tsc --noEmit
+
+      - name: Compilar (Vite)
+        run: npm run build
+
+      - name: Guardar build
+        uses: actions/upload-artifact@v4
+        with:
+          name: odontoflow-dist
+          path: dist
+          retention-days: 7
+
+  deploy:
+    name: Publicar no GitHub Pages
+    needs: build
+    # Só publica a partir da main (não em pull requests)
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install --no-audit --no-fund
+
+      # O Pages serve o site em /<nome-do-repositório>/, por isso o --base
+      - name: Compilar para o Pages
+        run: npm run build -- --base=/${{ github.event.repository.name }}/
+
+      # Fallback para rotas do React Router ao recarregar a página
+      - name: Criar 404.html
+        run: cp dist/index.html dist/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
