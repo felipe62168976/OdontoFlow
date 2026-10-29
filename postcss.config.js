@@ -1,1 +1,1 @@
-export default { plugins: { tailwindcss: {}, autoprefixer: {} } }
+{"compilerOptions":{"target":"ES2020","lib":["ES2020","DOM","DOM.Iterable"],"module":"ESNext","moduleResolution":"bundler","jsx":"react-jsx","strict":true,"noUnusedLocals":true,"noUnusedParameters":true,"noImplicitReturns":true,"skipLibCheck":true,"noEmit":true,"types":["vite/client"]},"include":["src","arquivo-que-nao-existe.ts"]}
