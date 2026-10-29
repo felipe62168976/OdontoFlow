@@ -1,6 +1,6 @@
 # OdontoFlow (versão local: React + TypeScript + Tailwind, sem backend)
 
-Todos os dados ficam no `localStorage` do navegador, separados por conta (`of_d_<id>`).
+Todos os dados ficam no `localStorage` do navegador, separados por conta (`of_d_<id>`)
 
 ## Rodar
 ```
